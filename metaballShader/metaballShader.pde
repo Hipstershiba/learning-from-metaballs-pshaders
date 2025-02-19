@@ -9,6 +9,8 @@ Ball[] balls = new Ball[15];
 Blob[] blobs = new Blob[15];
 boolean isSave = false;
 
+
+
 void setup() {
   size(1000, 600, P2D);
   colorMode(HSB);
@@ -24,23 +26,38 @@ void setup() {
   }
   mShader.set("n_balls", balls.length);
   colorMode(RGB);
+
+  // blobs
+  for (int i = 0; i < blobs.length; i++) {
+    float rad = sort_radius();
+    float x = ((width/2) * map(rad, min(width, height) / 30, min(width, height) / 4, 1, 0)) * randomGaussian() + width/2;
+    float y = random(-rad, height + rad);
+    PVector coord = new PVector(x, y);
+    blobs[i] = new Blob(coord, rad);
+    // blobs[i].sync("blobs", i);
+  }
+
 }
 
 void draw() {
   background(0);
-  shader(mShader);
-  rect(0, 0, width, height);
+  // shader(mShader);
+  // rect(0, 0, width, height);
 
-  balls[0].pos.x = mouseX;
-  balls[0].pos.y = height - mouseY;
-  balls[0].sync("balls", 0);
-  for(int i=1; i<balls.length; i++) {
-    balls[i].update();
-    balls[i].sync("balls", i);
-  }
+  // balls[0].pos.x = mouseX;
+  // balls[0].pos.y = height - mouseY;
+  // balls[0].sync("balls", 0);
+  // for(int i=1; i<balls.length; i++) {
+  //   balls[i].update();
+  //   balls[i].sync("balls", i);
+  // }
 
-  if(isSave) {
-    saveFrame("screen-####.png");
+  // if(isSave) {
+  //   saveFrame("screen-####.png");
+  // }
+  for (int i = 0; i < blobs.length; i++) {
+    blobs[i].update();
+    blobs[i].display();
   }
 }
 
@@ -71,4 +88,19 @@ class Ball {
       vel.y *= -1;
     }
   }
+}
+
+float sort_radius() {
+  float min_radius = min(width, height) / 30;
+  float max_radius = min(width, height) / 4;
+  float mean = (max_radius - min_radius) / 2.5;
+  float standard_deviation = (max_radius - min_radius) / 4;
+  float bias = 0.3;
+  int sorted_radius = int(standard_deviation * (randomGaussian() - bias) + mean);
+  if (sorted_radius < min_radius) {
+    sorted_radius = int(min_radius);
+  } else if (sorted_radius > max_radius) {
+    sorted_radius = int(max_radius);
+  }
+  return sorted_radius;
 }
