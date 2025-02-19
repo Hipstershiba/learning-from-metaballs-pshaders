@@ -11,7 +11,7 @@ boolean isSave = false;
 void setup() {
   size(1000, 600, P2D);
   colorMode(HSB);
-  mShader = loadShader("frag.glsl");
+  mShader = loadShader("shader.glsl");
   for(int i=0; i<balls.length; i++) {
     PVector pos = new PVector(random(width), random(height), 1.0); // GLSL only accept vec3
     PVector vel = new PVector(random(-3, 3), random(-1, 1), 0.0);
