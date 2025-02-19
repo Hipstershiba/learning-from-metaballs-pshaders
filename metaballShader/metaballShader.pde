@@ -5,26 +5,29 @@
  */
 
 PShader mShader;
-Ball[] balls = new Ball[15];
-Blob[] blobs = new Blob[15];
+// Ball[] balls = new Ball[15];
+Blob[] blobs = new Blob[300];
 boolean isSave = false;
 
 
 
 void setup() {
-  size(1000, 600, P2D);
+  pixelDensity(1);
+  // size(1000, 600, P2D);
+  fullScreen(P2D, 1);
+  frameRate(75);
   colorMode(HSB);
   mShader = loadShader("shader.glsl");
-  for(int i=0; i<balls.length; i++) {
-    PVector pos = new PVector(random(width), random(height), 1.0); // GLSL only accept vec3
-    PVector vel = new PVector(random(-3, 3), random(-1, 1), 0.0);
-    color c = color(random(255), 255, 255);
-    PVector rgb = new PVector(red(c)/255, green(c)/255, blue(c)/255);
-    float r = random(50, 80);
-    balls[i] = new Ball(pos, vel, rgb, r);
-    balls[i].sync("balls", i);
-  }
-  mShader.set("n_balls", balls.length);
+  // for(int i=0; i<balls.length; i++) {
+  //   PVector pos = new PVector(random(width), random(height), 1.0); // GLSL only accept vec3
+  //   PVector vel = new PVector(random(-3, 3), random(-1, 1), 0.0);
+  //   color c = color(random(255), 255, 255);
+  //   PVector rgb = new PVector(red(c)/255, green(c)/255, blue(c)/255);
+  //   float r = random(50, 80);
+  //   balls[i] = new Ball(pos, vel, rgb, r);
+  //   balls[i].sync("balls", i);
+  // }
+  // mShader.set("n_balls", balls.length);
   colorMode(RGB);
 
   // blobs
@@ -33,16 +36,17 @@ void setup() {
     float x = ((width/2) * map(rad, min(width, height) / 30, min(width, height) / 4, 1, 0)) * randomGaussian() + width/2;
     float y = random(-rad, height + rad);
     PVector coord = new PVector(x, y);
-    blobs[i] = new Blob(coord, rad);
-    // blobs[i].sync("blobs", i);
+    blobs[i] = new Blob(coord, rad, i);
+    blobs[i].sync("blobs", i);
   }
+  mShader.set("totalBlobs", blobs.length);
 
 }
 
 void draw() {
   background(0);
-  // shader(mShader);
-  // rect(0, 0, width, height);
+  shader(mShader);
+  rect(0, 0, width, height);
 
   // balls[0].pos.x = mouseX;
   // balls[0].pos.y = height - mouseY;
@@ -57,42 +61,50 @@ void draw() {
   // }
   for (int i = 0; i < blobs.length; i++) {
     blobs[i].update();
-    blobs[i].display();
+    blobs[i].sync("blobs", i);
+    // blobs[i].display();
   }
+
+  resetShader();
+  noStroke();
+  fill(255);
+  rect(10, 10, 50, 24);
+  fill(0);
+  text("FPS: " + int(frameRate), 16, 25);
 }
 
-class Ball {
-  PVector pos, rgb, vel;
-  float r;
+// class Ball {
+//   PVector pos, rgb, vel;
+//   float r;
 
-  Ball(PVector pos, PVector vel, PVector rgb, float r) {
-    this.pos = pos;
-    this.vel = vel;
-    this.rgb = rgb;
-    this.r = r;
-  }
+//   Ball(PVector pos, PVector vel, PVector rgb, float r) {
+//     this.pos = pos;
+//     this.vel = vel;
+//     this.rgb = rgb;
+//     this.r = r;
+//   }
 
-  void sync(String arrName, int idx) {
-    String varname = arrName + "[" + idx + "].";
-    mShader.set(varname + "pos", pos);
-    mShader.set(varname + "rgb", rgb);
-    mShader.set(varname + "r", r);
-  }
+//   void sync(String arrName, int idx) {
+//     String varname = arrName + "[" + idx + "].";
+//     mShader.set(varname + "pos", pos);
+//     mShader.set(varname + "rgb", rgb);
+//     mShader.set(varname + "r", r);
+//   }
 
-  void update() {
-    pos.add(vel);
-    if(pos.x < 0 || pos.x >= width) {
-      vel.x *= -1;
-    }
-    if(pos.y < 0 || pos.y >= height) {
-      vel.y *= -1;
-    }
-  }
-}
+//   void update() {
+//     pos.add(vel);
+//     if(pos.x < 0 || pos.x >= width) {
+//       vel.x *= -1;
+//     }
+//     if(pos.y < 0 || pos.y >= height) {
+//       vel.y *= -1;
+//     }
+//   }
+// }
 
 float sort_radius() {
   float min_radius = min(width, height) / 30;
-  float max_radius = min(width, height) / 4;
+  float max_radius = min(width, height) / 3.9;
   float mean = (max_radius - min_radius) / 2.5;
   float standard_deviation = (max_radius - min_radius) / 4;
   float bias = 0.3;

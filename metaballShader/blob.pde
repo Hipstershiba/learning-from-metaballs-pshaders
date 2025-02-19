@@ -1,21 +1,28 @@
 class Blob {
     private PVector coord;
     private float radius;
+    public int index;
 
     private PVector speed;
     private PVector acceleration;
     private float maxSpeed;
     private float maxForce;
 
-    Blob(PVector coord, float radius) {
+    Blob(PVector coord, float radius, int index) {
         this.coord = coord;
         this.radius = radius;
+        this.index = index;
+
+        this.speed = new PVector(0, 0, 0);
+        this.acceleration = new PVector(0, 0, 0);
+        this.maxSpeed = 1;
+        this.maxForce = 0.2;
     }
 
     void sync(String arrName, int index) {
         String uniformName = arrName + "[" + index + "].";
         mShader.set(uniformName + "pos", coord);
-        mShader.set(uniformName + "r", radius);	
+        mShader.set(uniformName + "rad", radius);	
     }
 
     void display() {
@@ -23,10 +30,10 @@ class Blob {
     }
 
     void update() {
-        accelerate();
-        updateSpeed();
-        move();
-        bounceBorders();
+        this.accelerate();
+        this.updateSpeed();
+        this.move();
+        this.bounceBorders();
     }
 
     void move() {
@@ -39,11 +46,13 @@ class Blob {
     }
 
     void accelerate() {
-        float noiseStep = 0.00005;
-        float accx = map(noise(radius + noiseStep), 0, 1, -maxForce/40, maxForce/40);
-        float accy = map(noise(radius + noiseStep), 0, 1, -maxForce, maxForce);
-        acceleration.add(accx, accy);
-        acceleration.limit(maxForce);
+        float noiseStep = 0.005;
+        //float accx = map(noise(this.radius + noiseStep), 0, 1, -maxForce/50, maxForce/50);
+        float heat = map(this.coord.y, 0, height, 0.015, -0.015);
+        float accx = 0.0;
+        float accy = map(noise((this.radius * 100) + noiseStep), 0, 1, -maxForce, maxForce) + heat;
+        this.acceleration.set(accx, accy, 0);
+        this.acceleration.limit(maxForce);
     }
 
     void bounceBorders() {
