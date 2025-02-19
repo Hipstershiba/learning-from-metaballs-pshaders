@@ -17,14 +17,14 @@ void main() {
     int idx = 0;
     float highest = 0;
     for(int i=0; i<n_balls; i++) {
-	Ball b = balls[i];
-	float dst = distance(b.pos.xy, gl_FragCoord.xy);
-	float val = b.r / dst;
-	total += val;
-	if(val > highest) {
-	    idx = i;
-	    highest = val;
-	}
+        Ball b = balls[i];
+        float dst = distance(b.pos.xy, gl_FragCoord.xy);
+        float val = b.r / dst;
+        total += val;
+        if(val > highest) {
+            idx = i;
+            highest = val;
+        }
     }
     if(total < threshold) {
     	gl_FragColor = vec4(vec3(1.0), 1.0);

@@ -6,6 +6,7 @@
 
 PShader mShader;
 Ball[] balls = new Ball[15];
+Blob[] blobs = new Blob[15];
 boolean isSave = false;
 
 void setup() {
