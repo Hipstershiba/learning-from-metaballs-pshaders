@@ -1,6 +1,5 @@
 PShader mShader;
-Blob[] blobs = new Blob[70];
-boolean isSave = false;
+Blob[] blobs = new Blob[60];
 
 float debugcoordy = 0.0;
 float debugheat = 0.0;
@@ -17,10 +16,11 @@ PGraphics lava_canva;
 
 void setup() {
   pixelDensity(1);
-  size(540, 960, P2D);
-  surface.setLocation(width/2, 0);
-  // fullScreen(P2D, 1);
-  frameRate(60);
+  // size(540, 960, P2D);
+  // size(720, 1280, P2D);
+  // surface.setLocation(width/2, 0);
+  fullScreen(P2D, 1);
+  // frameRate(60);
 
  // initialize canvas
   logo_canva = createGraphics(width, height, P2D);
@@ -33,7 +33,7 @@ void setup() {
   logo_icon_vector = loadShape("logo_icon.svg");
 
   // Initialize blobs
-  float minRad = min(width, height) / 30;
+  float minRad = min(width, height) / 20;
   float maxRad = min(width, height) / 6;
   for (int i = 0; i < blobs.length; i++) {
     float rad = sort_radius();

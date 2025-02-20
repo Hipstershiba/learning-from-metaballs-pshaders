@@ -4,7 +4,7 @@ struct Blob {
 };
 
 const int MAX_BLOBS = 300;
-const float threshold = 2.0;
+const float threshold = 1.0;
 
 uniform Blob blobs[MAX_BLOBS];
 uniform int totalBlobs;
@@ -24,9 +24,6 @@ void main() {
         value = sqRadius / (sqDeltaX + sqDeltaY);
         total += value;
     }
-    if(total < 1.0) {
-    	gl_FragColor = vec4(vec3(1.0), 1.0);
-    } else if(total > 1.0) {
-    	gl_FragColor = vec4(vec3(0.0), 1.0);
-    }
+    vec3 pixelColor = vec3(1.0 - floor(total * threshold));
+    gl_FragColor = vec4(pixelColor, 1.0);
 }
