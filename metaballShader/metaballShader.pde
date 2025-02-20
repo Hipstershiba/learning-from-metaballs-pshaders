@@ -6,7 +6,7 @@
 
 PShader mShader;
 // Ball[] balls = new Ball[15];
-Blob[] blobs = new Blob[10];
+Blob[] blobs = new Blob[80];
 boolean isSave = false;
 
 
@@ -107,7 +107,7 @@ void draw() {
 float sort_radius() {
   // float min_radius = min(width, height) / 30;
   float min_radius = min(width, height) / 30;
-  float max_radius = min(width, height) / 4;
+  float max_radius = min(width, height) / 6;
   float mean = (max_radius - min_radius) / 2.5;
   float standard_deviation = (max_radius - min_radius) / 4;
   float bias = 0.3;
