@@ -20,7 +20,7 @@ void setup() {
   // size(720, 1280, P2D);
   // surface.setLocation(width/2, 0);
   fullScreen(P2D, 1);
-  // frameRate(60);
+  frameRate(60);
 
  // initialize canvas
   logo_canva = createGraphics(width, height, P2D);
@@ -55,8 +55,8 @@ void draw() {
   background(255);
   // shader(mShader);
   // rect(0, 0, width, height);
-  draw_lava();
   draw_logo();
+  draw_lava();
   image(logo_canva, 0, 0);
   image(lava_canva, 0, 0);
 
@@ -88,12 +88,12 @@ void draw() {
   // text("acceleration: " + debugacceleration, width/2, blobs[0].coord.y + 40);
 
   // FPS display
-  noStroke();
-  fill(255);
-  rect(10, 10, 50, 24);
-  fill(0);
-  textAlign(LEFT);
-  text("FPS: " + int(frameRate), 16, 25);
+  // noStroke();
+  // fill(255);
+  // rect(10, 10, 50, 24);
+  // fill(0);
+  // textAlign(LEFT);
+  // text("FPS: " + int(frameRate), 16, 25);
   // End debug
 }
 
