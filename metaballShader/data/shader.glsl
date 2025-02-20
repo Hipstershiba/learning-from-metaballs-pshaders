@@ -1,19 +1,7 @@
-// struct Ball {
-//     vec3 pos;
-//     vec3 rgb;
-//     float r;
-// };
-
 struct Blob {
     vec3 pos;
     float rad;
 };
-
-// const int MAX_BALLS = 50;
-// const float threshold = 3.4;
-
-// uniform Ball balls[MAX_BALLS];
-// uniform int n_balls;
 
 const int MAX_BLOBS = 300;
 const float threshold = 2.0;

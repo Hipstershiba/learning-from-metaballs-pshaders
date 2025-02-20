@@ -8,6 +8,11 @@ class Blob {
     private float maxSpeed;
     private float maxForce;
 
+    public float heat;
+    public float accx;
+    public float accy;
+    public float accNoise;
+
     Blob(PVector coord, float radius, int index) {
         this.coord = coord;
         this.radius = radius;
@@ -46,14 +51,24 @@ class Blob {
     }
 
     void accelerate() {
-        float noiseStep = 0.015;
+        noiseSeed(this.index);
+        float noiseStep = millis() * 0.00001;
         //float accx = map(noise(this.radius + noiseStep), 0, 1, -maxForce/50, maxForce/50);
-        float heat = map(this.coord.y, 0, height, 0.001, -0.001);
-        float accx = 0.0;
-        float accy = map(noise((this.radius * 100) + noiseStep), 0, 1, -maxForce, maxForce);
-        this.acceleration.set(accx, accy, 0);
-        this.acceleration.add(0, heat, 0);
+        this.heat = map(this.coord.y, -this.radius, height + this.radius, 0.05, -0.05);
+        this.accx = 0.0;
+        this.accNoise = map(noise((this.radius * (this.index * 1000)) + noiseStep), 0, 1, -maxForce, maxForce);
+        this.accy = this.accNoise;
+        this.acceleration.set(this.accx, this.accy, 0);
+        // this.acceleration.add(0, this.heat, 0);
         // this.acceleration.limit(maxForce);
+    }
+
+    public float getCoordY() {
+        return this.coord.y;
+    }
+
+    public float getAccelerationY() {
+        return this.acceleration.y;
     }
 
     void bounceBorders() {
