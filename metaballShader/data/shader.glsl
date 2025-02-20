@@ -28,17 +28,17 @@ void main() {
     int index = 0;
     float highest = 0;
     for (int i = 0; i < totalBlobs; i++) {
+        float value = 0;
         Blob blob = blobs[i];
-        float distance = distance(blob.pos.xy, gl_FragCoord.xy);
-        total += blob.rad / distance;
-        // if(val > highest) {
-        //     index = i;
-        //     highest = val;
-        // }
+        float sqDeltaX = pow(blob.pos.x - gl_FragCoord.x, 2.0);
+        float sqDeltaY = pow(blob.pos.y - gl_FragCoord.y, 2.0);
+        float sqRadius = pow(blob.rad, 2.0);
+        value = sqRadius / (sqDeltaX + sqDeltaY);
+        total += value;
     }
-    if(total < threshold) {
+    if(total < 1.0) {
     	gl_FragColor = vec4(vec3(1.0), 1.0);
-    } else if(total < threshold + 0.5) {
+    } else if(total > 1.0) {
     	gl_FragColor = vec4(vec3(0.0), 1.0);
     }
 }
