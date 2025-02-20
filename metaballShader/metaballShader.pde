@@ -6,16 +6,17 @@
 
 PShader mShader;
 // Ball[] balls = new Ball[15];
-Blob[] blobs = new Blob[300];
+Blob[] blobs = new Blob[10];
 boolean isSave = false;
 
 
 
 void setup() {
   pixelDensity(1);
-  // size(1000, 600, P2D);
-  fullScreen(P2D, 1);
-  frameRate(75);
+  size(540, 960, P2D);
+  surface.setLocation(width/2, 0);
+  // fullScreen(P2D, 1);
+  frameRate(60);
   colorMode(HSB);
   mShader = loadShader("shader.glsl");
   // for(int i=0; i<balls.length; i++) {
@@ -44,7 +45,7 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(255);
   shader(mShader);
   rect(0, 0, width, height);
 
@@ -61,6 +62,7 @@ void draw() {
   // }
   for (int i = 0; i < blobs.length; i++) {
     blobs[i].update();
+    blobs[i].display();
     blobs[i].sync("blobs", i);
     // blobs[i].display();
   }
@@ -103,8 +105,9 @@ void draw() {
 // }
 
 float sort_radius() {
+  // float min_radius = min(width, height) / 30;
   float min_radius = min(width, height) / 30;
-  float max_radius = min(width, height) / 3.9;
+  float max_radius = min(width, height) / 4;
   float mean = (max_radius - min_radius) / 2.5;
   float standard_deviation = (max_radius - min_radius) / 4;
   float bias = 0.3;

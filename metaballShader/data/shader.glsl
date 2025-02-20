@@ -16,7 +16,7 @@ struct Blob {
 // uniform int n_balls;
 
 const int MAX_BLOBS = 300;
-const float threshold = 46.0;
+const float threshold = 2.0;
 
 uniform Blob blobs[MAX_BLOBS];
 uniform int totalBlobs;
