@@ -46,13 +46,14 @@ class Blob {
     }
 
     void accelerate() {
-        float noiseStep = 0.005;
+        float noiseStep = 0.015;
         //float accx = map(noise(this.radius + noiseStep), 0, 1, -maxForce/50, maxForce/50);
-        float heat = map(this.coord.y, 0, height, 0.015, -0.015);
+        float heat = map(this.coord.y, 0, height, 0.001, -0.001);
         float accx = 0.0;
-        float accy = map(noise((this.radius * 100) + noiseStep), 0, 1, -maxForce, maxForce) + heat;
+        float accy = map(noise((this.radius * 100) + noiseStep), 0, 1, -maxForce, maxForce);
         this.acceleration.set(accx, accy, 0);
-        this.acceleration.limit(maxForce);
+        this.acceleration.add(0, heat, 0);
+        // this.acceleration.limit(maxForce);
     }
 
     void bounceBorders() {
