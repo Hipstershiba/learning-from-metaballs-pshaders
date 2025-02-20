@@ -13,14 +13,14 @@ class Blob {
     public float accy;
     public float accNoise;
 
-    Blob(PVector coord, float radius, int index) {
+    Blob(PVector coord, float radius, int index, float minRad, float maxRad) {
         this.coord = coord;
         this.radius = radius;
         this.index = index;
 
         this.speed = new PVector(0, 0, 0);
         this.acceleration = new PVector(0, 0, 0);
-        this.maxSpeed = 1;
+        this.maxSpeed = map(this.radius, minRad, maxRad, 1, 0.1);
         this.maxForce = 0.2;
     }
 
@@ -47,15 +47,16 @@ class Blob {
 
     void updateSpeed() {
         speed.add(acceleration);
+        // speed.x = constrain(speed.x, -0.3, 0.3);
         speed.limit(maxSpeed);
     }
 
     void accelerate() {
         noiseSeed(this.index);
         float noiseStep = millis() * 0.00001;
-        //float accx = map(noise(this.radius + noiseStep), 0, 1, -maxForce/50, maxForce/50);
+        this.accx = map(noise(this.radius * (this.index * 1000) + (noiseStep * 100)), 0, 1, -maxForce/50, maxForce/50);
         this.heat = map(this.coord.y, -this.radius, height + this.radius, 0.05, -0.05);
-        this.accx = 0.0;
+        // this.accx = 0.0;
         this.accNoise = map(noise((this.radius * (this.index * 1000)) + noiseStep), 0, 1, -maxForce, maxForce);
         this.accy = this.accNoise;
         this.acceleration.set(this.accx, this.accy, 0);

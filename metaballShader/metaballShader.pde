@@ -1,5 +1,5 @@
 PShader mShader;
-Blob[] blobs = new Blob[60];
+Blob[] blobs = new Blob[70];
 boolean isSave = false;
 
 float debugcoordy = 0.0;
@@ -33,6 +33,8 @@ void setup() {
   logo_icon_vector = loadShape("logo_icon.svg");
 
   // Initialize blobs
+  float minRad = min(width, height) / 30;
+  float maxRad = min(width, height) / 6;
   for (int i = 0; i < blobs.length; i++) {
     float rad = sort_radius();
     // float rad = 100;
@@ -40,7 +42,7 @@ void setup() {
     // float x = width/2;
     float y = random(-rad, height + rad);
     PVector coord = new PVector(x, y);
-    blobs[i] = new Blob(coord, rad, i);
+    blobs[i] = new Blob(coord, rad, i, minRad, maxRad);
     blobs[i].sync("blobs", i);
   }
   mShader.set("totalBlobs", blobs.length);
@@ -120,6 +122,7 @@ for (int i = 0; i < blobs.length; i++) {
 
   lava_canva.beginDraw();
   lava_canva.shader(mShader);
+  lava_canva.noStroke();
   lava_canva.rect(0, 0, width, height);
   // float canvaResolution = lava_canva.width * lava_canva.height;
   // for (int i = 0; i < canva_resolution; i++) {
@@ -134,7 +137,7 @@ void draw_logo() {
   logo_canva.shapeMode(CENTER);
   float horizontal_ratio = width / logo_icon_vector.width;
   float vertical_ratio = height / logo_icon_vector.height;
-  float ratio = min(horizontal_ratio, vertical_ratio) * 0.8;
+  float ratio = min(horizontal_ratio, vertical_ratio) * 0.6;
   float new_width = logo_icon_vector.width * ratio;
   float new_height = logo_icon_vector.height * ratio;
   logo_canva.shape(logo_icon_vector, width/2, height/2, new_width, new_height);
