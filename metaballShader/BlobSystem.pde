@@ -1,92 +1,59 @@
 class BlobSystem {
-    private PVector coord;
-    private float radius;
-    public int index;
+    ArrayList<Blob> blobs = new ArrayList<Blob>();
+    FloatList blobAttributesList = new FloatList();
+    float[] blobsBuffer;
+    FloatBuffer fbBlobs;
+    int numOfBlobs;
+    ShaderProgram shaderProgram;
+    ComputeProgram computeProgram;
 
-    private PVector speed;
-    private PVector acceleration;
-    private float maxSpeed;
-    private float maxForce;
+    BlobSystem(int count) {
 
-    public float heat;
-    public float accx;
-    public float accy;
-    public float accNoise;
+        numOfBlobs = count;
+        for (int i = 0; i < count; i++) {
+            Blob blob = new Blob();
 
-    Blob(PVector coord, float radius, int index, float minRad, float maxRad) {
-        this.coord = coord;
-        this.radius = radius;
-        this.index = index;
+            // Set random position and mass
+            blob.pos.x = random(-1, 1);
+            blob.pos.y = random(-1, 1);
+            blob.mass = random();
 
-        this.speed = new PVector(0, 0, 0);
-        this.acceleration = new PVector(0, 0, 0);
-        this.maxSpeed = map(this.radius, minRad, maxRad, 1, 0.1);
-        this.maxForce = 0.2;
+            //  Initialize attributes list
+            blobAttributesList.append(blob.pos.x);
+            blobAttributesList.append(blob.pos.y);
+            blobAttributesList.append(blob.vel.x);
+            blobAttributesList.append(blob.vel.y);
+            blobAttributesList.append(blob.acc.x);
+            blobAttributesList.append(blob.acc.y);
+            blobAttributesList.append(blob.mass);
+        }
+
+        blobsBuffer = new float[blobAttributesList.size()];
+        for (int i = 0; i < blobsBuffer.length; i++) {
+            blobsBuffer[i] = blobAttributesList.get(i);
+        }
+
+        fbBlobs = Buffers.newDirectFloatBuffer(blobsBuffer);
+        shaderProgram = new ShaderProgram(gl, "vert.glsl", "frag.glsl");
+        computeProgram = new ComputeProgram(gl, "comp.glsl", fbBlobs);
     }
 
-    void sync(String arrName, int index) {
-        String uniformName = arrName + "[" + index + "].";
-        mShader.set(uniformName + "pos", coord);
-        mShader.set(uniformName + "rad", radius);	
-    }
-
-    void display() {
-        ellipse(coord.x, coord.y, radius*2, radius*2);
+    void loadShader(String v, String f, String c) {
+        shaderProgram = new ShaderProgram(gl, v, f);
+        computeProgram = new ComputeProgram(gl, c, fbBlobs);
     }
 
     void update() {
-        this.accelerate();
-        this.updateSpeed();
-        this.move();
-        this.bounceBorders();
+        computeProgram.beginDispatch(1024, 1, 1);
+        shaderProgram.begin();
     }
 
-    void move() {
-        coord.add(speed);
+    void render() {
+        shaderProgram.draw(numOfBlobs);
     }
 
-    void updateSpeed() {
-        speed.add(acceleration);
-        // speed.x = constrain(speed.x, -0.3, 0.3);
-        speed.limit(maxSpeed);
-    }
-
-    void accelerate() {
-        noiseSeed(this.index);
-        float noiseStep = millis() * 0.00001;
-        this.accx = map(noise(this.radius * (this.index * 1000) + (noiseStep * 100)), 0, 1, -maxForce/50, maxForce/50);
-        this.heat = map(this.coord.y, -this.radius, height + this.radius, 0.05, -0.05);
-        // this.accx = 0.0;
-        this.accNoise = map(noise((this.radius * (this.index * 1000)) + noiseStep), 0, 1, -maxForce, maxForce);
-        this.accy = this.accNoise;
-        this.acceleration.set(this.accx, this.accy, 0);
-        // this.acceleration.add(0, this.heat, 0);
-        // this.acceleration.limit(maxForce);
-    }
-
-    public float getCoordY() {
-        return this.coord.y;
-    }
-
-    public float getAccelerationY() {
-        return this.acceleration.y;
-    }
-
-    void bounceBorders() {
-        float radiusTolerance = 0.2;
-        float bounceFactor = 0.8;
-        
-        if(coord.x < radius + radiusTolerance || 
-        coord.x > width - radius - radiusTolerance) {
-            coord.x = constrain(coord.x, radius + radiusTolerance, width - radius - radiusTolerance);
-            speed.x *= -bounceFactor;
-        }
-
-        if(coord.y < radius + radiusTolerance ||
-        coord.y > height - radius - radiusTolerance) {
-            coord.y = constrain(coord.y, radius + radiusTolerance, height - radius - radiusTolerance);
-            speed.y *= -bounceFactor;
-        }
-
+    void release() {
+        shaderProgram.release();
+        computeProgram.release();
     }
 }
